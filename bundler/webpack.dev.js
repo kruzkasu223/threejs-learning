@@ -31,21 +31,10 @@ module.exports = merge(commonConfiguration, {
       progress: false,
     },
     setupMiddlewares: function (middlewares, devServer) {
-      console.log(
-        "------------------------------------------------------------"
-      );
-      console.log(devServer.options.host);
       const port = devServer.options.port;
       const https = devServer.options.https ? "s" : "";
-      const domain1 = `http${https}://${devServer.options.host}:${port}`;
-      const domain2 = `http${https}://localhost:${port}`;
-
-      console.log(
-        `Project running at:\n  - ${infoColor(domain1)}\n  - ${infoColor(
-          domain2
-        )}`
-      );
-
+      const domain = `http${https}://${devServer.options.host}:${port}`;
+      console.log(`Project is running at: ${infoColor(domain)}`);
       return middlewares;
     },
   },
