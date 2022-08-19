@@ -1,5 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
+import gsap from "gsap";
 
 // Scene
 const scene = new THREE.Scene();
@@ -27,3 +28,46 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
+
+// GSAP Animations
+// we have to keep animate function running in order to render latest position/frame
+
+gsap.to(mesh.position, { duration: 1, delay: 1, x: 2 });
+gsap.to(mesh.position, { duration: 1, delay: 2, x: 0 });
+
+// Animations
+
+// let time = Date.now();
+
+// const clock = new THREE.Clock();
+
+const animate = () => {
+  // setting same frame rate for all devices with JS Date
+  // const currentTime = Date.now();
+  // const deltaTime = currentTime - time;
+  // time = currentTime;
+
+  // const elapsedTime = clock.getElapsedTime();
+
+  // Update objects
+  // mesh.rotation.y = elapsedTime * Math.PI * 2;
+
+  // mesh.rotation.y = elapsedTime * Math.PI;
+  // mesh.rotation.x = elapsedTime * Math.PI;
+
+  // mesh.rotation.y += 0.001 * deltaTime;
+  // mesh.rotation.x += 0.001 * deltaTime;
+
+  // mesh.position.y = Math.sin(elapsedTime);
+  // mesh.position.x = Math.cos(elapsedTime);
+
+  // camera.position.y = Math.sin(elapsedTime);
+  // camera.position.x = Math.cos(elapsedTime);
+  // camera.lookAt(mesh.position);
+
+  // Render
+  renderer.render(scene, camera);
+  window.requestAnimationFrame(animate);
+};
+
+animate();
