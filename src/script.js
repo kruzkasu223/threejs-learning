@@ -2,13 +2,37 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-const cube = document.querySelector(".cube");
+const canvas = document.querySelector(".canvas");
 
 // Sizes
 const sizes = {
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
+
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // update threejs things
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+window.addEventListener("dblclick", (e) => {
+  const fullScreenElement =
+    document?.fullscreenElement || document?.webkit?.fullscreenElement;
+
+  if (!fullScreenElement) {
+    if (canvas.requestFullscreen) canvas.requestFullscreen();
+    else canvas.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else document.webkitExitFullscreen();
+  }
+});
 
 // Cursor
 const cursor = {
@@ -36,33 +60,20 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-// const aspectRatio = sizes.width / sizes.height;
-// const camera = new THREE.OrthographicCamera(
-//   -1 * aspectRatio,
-//   1 * aspectRatio,
-//   1,
-//   -1,
-//   0.1,
-//   100
-// );
-// camera.position.x = 2;
-// camera.position.y = 2;
 camera.position.z = 3;
-// camera.lookAt(mesh.position);
 scene.add(camera);
 
 // Controls
-const controls = new OrbitControls(camera, cube);
+const controls = new OrbitControls(camera, canvas);
+// controls.enabled = false;
 controls.enableDamping = true;
-// controls.target.z = 2;
-// controls.update();
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
-  canvas: cube,
+  canvas,
 });
 renderer.setSize(sizes.width, sizes.height);
-// renderer.render(scene, camera);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Animations
 
@@ -70,16 +81,6 @@ const clock = new THREE.Clock();
 
 const animate = () => {
   const elapsedTime = clock.getElapsedTime();
-
-  // mesh.rotation.y = elapsedTime;
-  // camera.position.x = cursor.x * 10;
-  // camera.position.y = cursor.y * 10;
-
-  // camera.lookAt(mesh.position);
-
-  // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
-  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-  // camera.position.y = cursor.y * Math.PI * 2;
 
   controls.update();
 
