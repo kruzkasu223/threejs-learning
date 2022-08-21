@@ -21,35 +21,28 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-window.addEventListener("dblclick", (e) => {
-  const fullScreenElement =
-    document?.fullscreenElement || document?.webkit?.fullscreenElement;
-
-  if (!fullScreenElement) {
-    if (canvas.requestFullscreen) canvas.requestFullscreen();
-    else canvas.webkitRequestFullscreen();
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen();
-    else document.webkitExitFullscreen();
-  }
-});
-
-// Cursor
-const cursor = {
-  x: 0,
-  y: 0,
-};
-window.addEventListener("mousemove", (e) => {
-  cursor.x = e.clientX / sizes.width - 0.5;
-  cursor.y = -(e.clientY / sizes.height - 0.5);
-});
-
 // Scene
 const scene = new THREE.Scene();
 
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+// const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
+// const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 5, 5, 5);
+const geometry = new THREE.BufferGeometry();
+
+const count = 500;
+const positionsArray = new Float32Array(count * 3 * 3);
+
+for (const i in positionsArray) {
+  positionsArray[i] = Math.random() - 0.5;
+}
+
+const positionsAttributes = new THREE.BufferAttribute(positionsArray, 3);
+geometry.setAttribute("position", positionsAttributes);
+
+const material = new THREE.MeshBasicMaterial({
+  color: 0xff0000,
+  wireframe: true,
+});
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
@@ -65,7 +58,6 @@ scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
-// controls.enabled = false;
 controls.enableDamping = true;
 
 // Renderer
