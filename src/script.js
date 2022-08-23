@@ -1,29 +1,76 @@
 import "./style.css"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import * as lil from "lil-gui"
-import gsap from "gsap"
+const textureImagePath = "./textures/"
+const doorImagePath = textureImagePath + "door/"
 
-// Debug
-const gui = new lil.GUI({ width: 400 })
+// Texture JS way
+// const image = new Image()
+// const texture = new THREE.Texture(image)
+// image.onload = () => {
+//   texture.needsUpdate = true
+// }
+// image.src = doorImagePath + "color.jpg"
 
-const parameter = {
-  spin: () => {
-    gsap.to(mesh.rotation, { y: mesh.rotation.y + 10, duration: 1 })
-  },
-}
-gui.add(parameter, "spin")
+// Texture Threejs way
+const loadingManager = new THREE.LoadingManager()
+// loadingManager.onStart = () => {
+//   console.log("loading started")
+// }
+// loadingManager.onLoad = () => {
+//   console.log("loading finished")
+// }
+// loadingManager.onProgress = () => {
+//   console.log("loading progressing")
+// }
+// loadingManager.onError = () => {
+//   console.log("loading error")
+// }
+const textureLoader = new THREE.TextureLoader(loadingManager)
+// const colorTexture = textureLoader.load(doorImagePath + "color.jpg")
+// const colorTexture = textureLoader.load(
+//   textureImagePath + "checkerboard-1024x1024.png"
+// )
+// const colorTexture = textureLoader.load(
+//   textureImagePath + "checkerboard-8x8.png"
+// )
+const colorTexture = textureLoader.load(textureImagePath + "minecraft.png")
+const alphaTexture = textureLoader.load(doorImagePath + "alpha.jpg")
+const heightTexture = textureLoader.load(doorImagePath + "height.jpg")
+const normalTexture = textureLoader.load(doorImagePath + "normal.jpg")
+const ambientOcclusionTexture = textureLoader.load(
+  doorImagePath + "ambientOcclusion.jpg"
+)
+const metalnessTexture = textureLoader.load(doorImagePath + "metalness.jpg")
+const roughnessTexture = textureLoader.load(doorImagePath + "roughness.jpg")
+// const texture = textureLoader.load(
+//   doorImagePath + "color.jpg",
+//   () => {
+//     console.log("load")
+//   },
+//   () => {
+//     console.log("progress")
+//   },
+//   () => {
+//     console.log("error")
+//   }
+// )
 
-// debug panel closed by default
-gui.open(false)
+// colorTexture.repeat.x = 2
+// colorTexture.repeat.y = 3
 
-// hide lil-gui
-window.addEventListener("keyup", (e) => {
-  if (e.key === "h") {
-    if (gui._hidden) gui.show()
-    else gui.hide()
-  }
-})
+// // colorTexture.wrapS = THREE.RepeatWrapping
+// // colorTexture.wrapT = THREE.RepeatWrapping
+// colorTexture.wrapS = THREE.MirroredRepeatWrapping
+// colorTexture.wrapT = THREE.MirroredRepeatWrapping
+
+// colorTexture.offset.x = 0.5
+// colorTexture.offset.y = 0.5
+// colorTexture.rotation = Math.PI * 0.25
+
+colorTexture.generateMipmaps = false
+colorTexture.minFilter = THREE.NearestFilter
+colorTexture.magFilter = THREE.NearestFilter
 
 // Canvas
 const canvas = document.querySelector(".canvas")
@@ -50,23 +97,12 @@ const scene = new THREE.Scene()
 
 // Object
 const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+// const geometry = new THREE.SphereGeometry(1, 32, 32)
+// const geometry = new THREE.ConeGeometry(1, 1, 32)
+// const geometry = new THREE.TorusGeometry(1, 0.35, 32, 100)
+const material = new THREE.MeshBasicMaterial({ map: colorTexture })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
-
-// gui.add(mesh.position, "x", -3, 3, 0.01);
-gui.add(mesh.position, "x", -3, 3, 0.01).min(-3).max(3).step(0.01)
-gui
-  .add(mesh.position, "y", -3, 3, 0.01)
-  .min(-3)
-  .max(3)
-  .step(0.01)
-  .name("elevation")
-gui.add(mesh.position, "z", -3, 3, 0.01).min(-3).max(3).step(0.01)
-
-gui.add(mesh, "visible")
-gui.add(material, "wireframe")
-gui.addColor(material, "color")
 
 // Camera
 const camera = new THREE.PerspectiveCamera(
@@ -75,7 +111,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 )
-camera.position.z = 3
+camera.position.z = 2
 scene.add(camera)
 
 // Controls
